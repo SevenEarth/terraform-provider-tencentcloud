@@ -37,9 +37,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
-        env:
-          GO111MODULE: off
         with:
+          skip-cache: true
           version: v1.54
           working-directory: ./tencentcloud
           args: --new-from-rev=origin/master -v
