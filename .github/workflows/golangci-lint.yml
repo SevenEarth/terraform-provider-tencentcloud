@@ -46,7 +46,7 @@ jobs:
           echo "::set-output name=dirs::$(git diff --name-only origin/master | grep '^tencentcloud/.*\.go$' | xargs -n 1 dirname | sort -u | sed 's|^tencentcloud/||' | xargs)"
         shell: bash
 
-      - name: Check for changed Go directories
+     - name: Check for changed Go directories
         id: checkDiffDir
         run: |
           if [ -z "${{ steps.getDiffDir.outputs.dirs }}" ]; then
@@ -65,7 +65,9 @@ jobs:
         run: |
           IFS=' ' read -r -a dirs <<< "${{ steps.getDiffFile.outputs.dirs }}"
           for dir in "${dirs[@]}"; do
+            echo $(dir)
             cd $dir
+            echo $(pwd)
             golangci-lint run --new-from-rev=origin/master -v
             cd -
           done
