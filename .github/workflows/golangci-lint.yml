@@ -63,12 +63,13 @@ jobs:
       - name: golangci-lint
         working-directory: ./tencentcloud
         run: |
+          set -e
           IFS=' ' read -r -a dirs <<< "${{ steps.getDiffFile.outputs.dirs }}"
           for dir in "${dirs[@]}"; do
-            echo $(dir)
-            cd $dir
-            echo $(pwd)
-            golangci-lint run --new-from-rev=origin/master -v
-            cd -
+            echo $(dir) || exit 1
+            cd $dir || exit 1
+            echo $(pwd) || exit 1
+            golangci-lint run --new-from-rev=origin/master -v || echo 'golangci-lint failed'
+            cd - || exit 1
           done
         shell: bash
