@@ -61,7 +61,6 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: golangci-lint
-        version: v1.63.4
         working-directory: ./tencentcloud
         run: |
           IFS=' ' read -r -a dirs <<< "${{ steps.getDiffFile.outputs.dirs }}"
