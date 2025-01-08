@@ -37,6 +37,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        env:
+          GO111MODULE: off
         with:
           version: v1.63.4
           working-directory: ./tencentcloud
