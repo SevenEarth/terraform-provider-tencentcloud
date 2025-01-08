@@ -28,12 +28,12 @@ func ResourceTencentCloudDasbAcl() *schema.Resource {
 			"name": {
 				Required:    true,
 				Type:        schema.TypeString,
-				Description: "Acl name.",
+				Description: "123Acl name.",
 			},
 			"allow_disk_redirect": {
 				Required:    true,
 				Type:        schema.TypeBool,
-				Description: "Allow disk redirect.",
+				Description: "123Allow disk redirect.",
 			},
 			"allow_any_account": {
 				Required:    true,
