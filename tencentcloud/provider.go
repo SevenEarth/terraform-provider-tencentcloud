@@ -458,11 +458,11 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"tencentcloud_availability_regions":                                  common.DataSourceTencentCloudAvailabilityRegions(),
-			"tencentcloud_emr":                                                   emr.DataSourceTencentCloudEmr(),
-			"tencentcloud_emr_nodes":                                             emr.DataSourceTencentCloudEmrNodes(),
-			"tencentcloud_emr_cvm_quota":                                         emr.DataSourceTencentCloudEmrCvmQuota(),
-			"tencentcloud_emr_auto_scale_records":                                emr.DataSourceTencentCloudEmrAutoScaleRecords(),
-			"tencentcloud_serverless_hbase_instances":                            emr.DataSourceTencentCloudServerlessHbaseInstances(),
+			// "tencentcloud_emr":                                                   emr.DataSourceTencentCloudEmr(),
+			// "tencentcloud_emr_nodes":                                             emr.DataSourceTencentCloudEmrNodes(),
+			// "tencentcloud_emr_cvm_quota":                                         emr.DataSourceTencentCloudEmrCvmQuota(),
+			// "tencentcloud_emr_auto_scale_records":                                emr.DataSourceTencentCloudEmrAutoScaleRecords(),
+			// "tencentcloud_serverless_hbase_instances":                            emr.DataSourceTencentCloudServerlessHbaseInstances(),
 			"tencentcloud_emr_job_status_detail":                                 emr.DataSourceTencentCloudEmrJobStatusDetail(),
 			"tencentcloud_emr_service_node_infos":                                emr.DataSourceTencentCloudEmrServiceNodeInfos(),
 			"tencentcloud_availability_zones":                                    common.DataSourceTencentCloudAvailabilityZones(),
