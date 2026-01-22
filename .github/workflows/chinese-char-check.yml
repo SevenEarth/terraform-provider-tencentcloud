@@ -45,7 +45,7 @@ jobs:
       - name: No relevant files - skip check
         if: steps.changed.outputs.exists != 'true'
         run: |
-          echo "ℹ️ No changed files in target directories (tencentcloud/services/ or website/)"
+          echo "ℹ️ No changed files in target directories (tencentcloud/ or website/)"
           echo "Chinese character check skipped."
 
       - name: Check for Chinese characters (only PR changes)
