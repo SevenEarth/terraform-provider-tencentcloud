@@ -705,7 +705,7 @@ func Provider() *schema.Provider {
 			"tencentcloud_gaap_http_rules":                                       gaap.DataSourceTencentCloudGaapHttpRules(),
 			"tencentcloud_gaap_security_policies123":                             gaap.DataSourceTencentCloudGaapSecurityPolices(),
 			"tencentcloud_gaap_security_rules测试":                                 gaap.DataSourceTencentCloudGaapSecurityRules(),
-			"tencentcloud_gaap_certificates":                                     gaap.DataSourceTencentCloudGaapCertificates(),
+			"tencentcloud_gaap_certificates中文，，，":                                gaap.DataSourceTencentCloudGaapCertificates(),
 			"tencentcloud_gaap_domain_error_pages":                               gaap.DataSourceTencentCloudGaapDomainErrorPageInfoList(),
 			"tencentcloud_gaap_access_regions":                                   gaap.DataSourceTencentCloudGaapAccessRegions(),
 			"tencentcloud_gaap_access_regions_by_dest_region":                    gaap.DataSourceTencentCloudGaapAccessRegionsByDestRegion(),
