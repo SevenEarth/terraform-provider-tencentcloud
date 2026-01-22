@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read  # 新增：获取PR详情的权限
 
 jobs:
   chinese-check:
@@ -19,15 +20,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # 关键：拉取base分支，确保diff对比准确
+          ref: ${{ github.event.pull_request.base.ref }}
 
-      - name: Get changed files (safe format)
+      - name: Fetch PR head branch
+        run: |
+          # 拉取当前PR的HEAD分支（确保能对比）
+          git fetch origin ${{ github.event.pull_request.head.ref }}:refs/remotes/origin/${{ github.event.pull_request.head.ref }}
+
+      - name: Get changed files (only current PR)
         id: changed
         uses: yumemi-inc/changed-files@v3
         with:
+          # 明确指定对比的分支：base vs PR head
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
           patterns: |
             tencentcloud/services/**
             website/**
           format: json
+          # 仅获取新增/修改的文件（排除删除的）
+          filter: added_modified
 
       - name: No relevant files - skip check
         if: steps.changed.outputs.exists != 'true'
@@ -35,44 +48,57 @@ jobs:
           echo "ℹ️ No changed files in target directories (tencentcloud/services/ or website/)"
           echo "Chinese character check skipped."
 
-      - name: Check for Chinese characters
+      - name: Check for Chinese characters (only PR changes)
         if: steps.changed.outputs.exists == 'true'
         run: |
-          files=$(echo '${{ steps.changed.outputs.files }}' | jq -r '.[]')
+          # 修复：用while循环解析JSON，避免空格路径问题
           found=false
           violations="chinese_violations.txt"
           > "$violations"
-
           export LC_ALL=en_US.UTF-8
 
-          for file in $files; do
+          # 正确解析JSON数组（兼容含空格的文件路径）
+          echo '${{ steps.changed.outputs.files }}' | jq -r '.[]' | while read -r file; do
             [ -z "$file" ] && continue
-            [ ! -f "$file" ] && continue
+            [ ! -f "$file" ] && echo "⚠️ File $file not found, skip" && continue
+            
+            # 跳过二进制文件
             if file --mime-type "$file" | grep -q 'binary/'; then
               echo "⚠️ Skipping binary file: $file"
               continue
             fi
 
-            if grep -Pn -o "[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]" "$file"; then
-              echo -e "\n❌ Chinese characters found in file: $file" | tee -a "$violations"
-              grep -Pn "[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]" "$file" | tee -a "$violations"
-              echo -e "\n" | tee -a "$violations"
-              found=true
+            # 【可选优化】仅检测PR修改的行（而非全文件）
+            # 获取PR中该文件的变动行
+            changed_lines=$(git diff -U0 ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | grep -E '^\+[^+]' | sed 's/^\+//')
+            
+            # 若变动行非空，检测其中的中文字符
+            if [ -n "$changed_lines" ]; then
+              # 将变动行写入临时文件检测
+              echo "$changed_lines" > temp_changed_lines.txt
+              if grep -Pn -o "[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]" temp_changed_lines.txt; then
+                echo -e "\n❌ Chinese characters found in PR changes of file: $file" | tee -a "$violations"
+                echo "Changed lines with Chinese characters:" | tee -a "$violations"
+                grep -Pn "[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]" temp_changed_lines.txt | tee -a "$violations"
+                echo -e "\n" | tee -a "$violations"
+                found=true
+              fi
+              rm -f temp_changed_lines.txt
+            else
+              echo "✅ No changed lines in $file, skip check"
             fi
           done
 
           if $found; then
-            echo -e "\n🚫 Validation failed: Chinese characters detected in PR!"
-            echo "=================================================="
+            echo -e "\n🚫 Validation failed: Chinese characters detected in PR changes!"
             cat "$violations"
-            echo "=================================================="
-            echo -e "\n📋 Action Required: Remove all Chinese characters from the listed files/lines."
+            rm -f "$violations"
             exit 1
           else
-            echo -e "\n✅ Validation passed: No Chinese characters found in changed files!"
+            echo -e "\n✅ Validation passed: No Chinese characters in PR changes!"
+            rm -f "$violations"
           fi
 
       - name: Cleanup
         if: always()
-        run: rm -f chinese_violations.txt
-  
+        run: rm -f chinese_violations.txt temp_changed_lines.txt
