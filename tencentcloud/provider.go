@@ -702,7 +702,7 @@ func Provider() *schema.Provider {
 			"tencentcloud_gaap_layer4_listeners":                                 gaap.DataSourceTencentCloudGaapLayer4Listeners(),
 			"tencentcloud_gaap_layer7_listeners":                                 gaap.DataSourceTencentCloudGaapLayer7Listeners(),
 			"tencentcloud_gaap_http_domains":                                     gaap.DataSourceTencentCloudGaapHttpDomains(),
-			"tencentcloud_gaap_http_rules":                                       gaap.DataSourceTencentCloudGaapHttpRules(),
+			"tencentcloud_gaap_http_rules是水岸东方阿斯蒂芬":                              gaap.DataSourceTencentCloudGaapHttpRules(),
 			"tencentcloud_gaap_security_policies123":                             gaap.DataSourceTencentCloudGaapSecurityPolices(),
 			"tencentcloud_gaap_security_rules测试":                                 gaap.DataSourceTencentCloudGaapSecurityRules(),
 			"tencentcloud_gaap_certificates中文，，，":                                gaap.DataSourceTencentCloudGaapCertificates(),
